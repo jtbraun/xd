@@ -183,7 +183,8 @@ class Svn(Scm):
 
   @staticmethod
   def detect(path='.'):
-    return os.path.isdir(os.path.join(path, '.svn'))
+    with open(os.devnull, 'w') as f:
+      return 0 == subprocess.call(['svn', 'info', path], stdout=f, stderr=f)
 
   @staticmethod
   def parseArgs(argv=sys.argv):
