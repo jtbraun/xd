@@ -331,6 +331,7 @@ def initDiffTool():
           close_fds=True,
           shell=True)
 
+  DiffTool('bcompare $f1 $f2 -title1=$l1 -title2=$l2')
   DiffTool('tkdiff -L $l1 -L $l2 -- $f1 $f2')
   DiffTool('xxdiff --title1 $l1 --title2 $l2 -- $f1 $f2')
   DiffTool('gvimdiff -- $f1 $f2')
