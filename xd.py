@@ -8,6 +8,7 @@ import shutil
 import string
 import subprocess
 import sys
+from itertools import chain
 
 #------------------------------ constants ------------------------------
 
@@ -644,9 +645,24 @@ def runScmDiff(cmdline, env, xd_dir):
 
 
 def mainController(argv=sys.argv):
-  scm = ScmMeta.get()
+  candidates = []
+  for arg in chain(argv[1:], ['.']):
+    # TODO: actually parse arguments intead of guessing at which ones
+    # may be paths to source-controlled files
+    if os.path.isfile(arg):
+      path = os.path.dirname(arg)
+    elif os.path.isdir(arg):
+      path = arg
+    else:
+      continue
+    if path in candidates:
+      continue
+    candidates.append(path)
+    scm = ScmMeta.get(path)
+    if scm is not None:
+      break
   if scm is None:
-    print >>sys.stderr, "fatal: '.' is not managed by scm"
+    print >>sys.stderr, "fatal: could not find a scm-managed directory in ", candidates
     return 1
   xd_dir = os.path.join(scm.getTmpDir(),
                         'xd.%s.%s' % (scm.__name__.lower(), os.getpid()))
