@@ -62,6 +62,18 @@ def appendCmdline(cmdline, data):
     data = [data]
   cmdline[i:i] = data
 
+def insertCmdline(cmdline, data, after=None, before=None):
+  if (after is not None) and (before is not None):
+    raise Exception("both after and before cannot be set")
+  if before is not None:
+    idx = cmdline.index(before)
+  elif after is not None:
+    idx = cmdline.index(after) + 1
+  else:
+    # default to append
+    idx = -1
+  cmdline.insert(idx, data)
+
 def escapeShell(s):
   for c in s:
     if not (c.isalnum() or c in r'@%^-_=+:,./'):
@@ -298,7 +310,7 @@ class Git(Scm):
 
   @staticmethod
   def setupExternalDiff(cmdline, env, xd=sys.argv[0]):
-    appendCmdline(cmdline, '--ext-diff')
+    insertCmdline(cmdline, '--ext-diff', after='diff')
     env['GIT_EXTERNAL_DIFF'] = xd
 
 #------------------------------ diff tools ------------------------------
